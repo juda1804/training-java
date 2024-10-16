@@ -1,43 +1,16 @@
 services:
-  postgres-db1:
+  postgres-db:
     image: postgres
-    container_name: postgres-db1
+    container_name: postgres-db
     environment:
       POSTGRES_USER: epam-user
       POSTGRES_PASSWORD: pwd123
-      POSTGRES_DB: tarea1
+      POSTGRES_DB: task1
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks:
-      - postgres-network
-
-  postgres-db-task2:
-    image: postgres
-    container_name: postgres-db-task2
-    environment:
-      POSTGRES_USER: epam-user
-      POSTGRES_PASSWORD: pwd123
-      POSTGRES_DB: task2
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - postgres-network
-
-  postgres-db-task5:
-    image: postgres
-    container_name: postgres-db-task5
-    environment:
-      POSTGRES_USER: epam-user
-      POSTGRES_PASSWORD: pwd123
-      POSTGRES_DB: task5
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d/ # Añadimos el directorio de inicialización de scripts
     networks:
       - postgres-network
 
