@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Booked Tickets</title>
+    <style>
+        /* ... existing styles ... */
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Booked Tickets</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Event ID</th>
+            <th>Place</th>
+            <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ticket : ${tickets.subList(0, tickets.size() > 100 ? 100 : tickets.size())}">
+            <td th:text="${ticket.id}"></td>
+            <td th:text="${ticket.userId}"></td>
+            <td th:text="${ticket.eventId}"></td>
+            <td th:text="${ticket.place}"></td>
+            <td th:text="${ticket.category}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Message for more than 100 records -->
+    <p th:if="${tickets.size() > 100}" style="color: red;">
+        There are more than 100 records. Only the first 100 are displayed.
+    </p>
+</div>
+</body>
+</html>

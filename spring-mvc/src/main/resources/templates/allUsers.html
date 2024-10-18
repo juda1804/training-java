@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+    <style>
+        /* ... existing styles ... */
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>All Users</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users.subList(0, users.size() > 100 ? 100 : users.size())}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+                <a th:href="@{/tickets/view(userId=${user.id})}">Ver Tickets</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Message for more than 100 records -->
+    <p th:if="${users.size() > 100}" style="color: red;">
+        There are more than 100 records. Only the first 100 are displayed.
+    </p>
+</div>
+</body>
+</html>
+
