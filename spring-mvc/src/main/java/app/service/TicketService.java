@@ -34,7 +34,7 @@ public class TicketService {
     }
 
 
-    public Page<Ticket> searchTickets(Pageable pageable) {
-        return ticketDao.findAll(pageable);
+    public Page<Ticket> searchTickets(Long userId, Pageable pageable) {
+        return ticketDao.findAllByUserId(userId, pageable);
     }
 }

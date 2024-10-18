@@ -26,7 +26,7 @@ public class TicketController {
     private BookingFacade bookingFacade;
 
     @GetMapping("/tickets/view")
-    public ModelAndView viewTickets(@RequestParam(defaultValue = "10") int pageNum,
+    public ModelAndView viewTickets(@RequestParam(defaultValue = "0") int pageNum,
                                     @RequestParam(defaultValue = "30") int pageSize,
                                     @RequestParam() Long userId) {
         User userById = bookingFacade.getUserById(userId).get();

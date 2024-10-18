@@ -101,10 +101,10 @@ public class BookingFacadeImpl implements BookingFacade {
     }
 
     @Override
-    public Page<Ticket> getBookedTickets(User user, int pageSize, int pageNum) {
-
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
-        return ticketService.searchTickets(pageable);
+    public Page<Ticket> getBookedTickets(User user, int page, int pageNum) {
+        Pageable pageable = PageRequest.of(page, pageNum);
+        Page<Ticket> tickets = ticketService.searchTickets(user.getId(), pageable);
+        return tickets;
 
     }
 
