@@ -17,13 +17,13 @@ public class EventService {
     }
 
     public Event createEvent(Event event) {
-        log.info("Creating new event {}", event);
+        log.debug("Creating new event {}", event);
         eventRepository.save(event);
         return event;
     }
 
     public Event getEventById(Long id) {
-        log.info("Retrieving event by id {}", id);
+        log.debug("Retrieving event by id {}", id);
         return eventRepository.findEventById(id);
     }
 

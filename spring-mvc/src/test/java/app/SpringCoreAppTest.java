@@ -37,7 +37,8 @@ class SpringCoreAppTest {
 
     @Test
     void testCreateTicket() {
-        bookingFacade.bookTicket( 1L, 1L, 100, STANDARD.name());
+        bookingFacade.bookTicket( 1L, 1L);
+
         Optional<Ticket> ticket = bookingFacade.getTicketById(101L);
 
         assertTrue(ticket.isPresent());
@@ -46,8 +47,8 @@ class SpringCoreAppTest {
 
     @Test
     void testCreateUser() {
-        bookingFacade.createUser("Juan", "juan@epam.com");
-        Optional<User> user = bookingFacade.getUserById(9999L);
+        User user1 = bookingFacade.createUser("Juan", "juan@epam.com");
+        Optional<User> user = bookingFacade.getUserById(user1.getId());
 
         assertTrue(user.isPresent());
         assertEquals("Juan", user.get().getName());

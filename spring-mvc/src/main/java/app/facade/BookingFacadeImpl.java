@@ -2,13 +2,16 @@ package app.facade;
 
 import app.domain.Event;
 import app.domain.Ticket;
+import app.domain.TicketBooked;
 import app.domain.TicketCategory;
 import app.domain.User;
+import app.domain.UserAccount;
 import app.facade.dto.TicketDto;
 import app.facade.dto.TicketsDto;
 import app.service.EventService;
 import app.service.TicketService;
 import app.service.UserService;
+import com.github.javafaker.Faker;
 import jakarta.xml.bind.Unmarshaller;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
@@ -46,11 +49,19 @@ public class BookingFacadeImpl implements BookingFacade {
 
     @Override
     public User createUser(String name, String email) {
-        log.info("Creating user {} {}", name, email);
+        log.debug("Creating user {} {}", name, email);
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         return userService.createUser(user);
+    }
+
+    @Override
+    public UserAccount addBalance(Long userId, long amount) {
+        UserAccount userAccount = userService.getUserAccountByUserId(userId);
+        userAccount.deposit(amount);
+        userService.saveUserAccount(userAccount);
+        return userAccount;
     }
 
     @Override
@@ -59,20 +70,6 @@ public class BookingFacadeImpl implements BookingFacade {
         event.setTitle(title);
         event.setDateTime(date);
         return eventService.createEvent(event);
-    }
-
-    @Override
-    public Ticket bookTicket(Long eventId, Long userId, Integer place, String category) {
-        TicketCategory ticketCategory = TicketCategory.valueOf(category);
-
-        Ticket ticket = new Ticket();
-        ticket.setUserId(userId);
-        ticket.setEventId(eventId);
-        ticket.setPlace(place);
-        ticket.setCategory(ticketCategory);
-
-        ticketService.bookTicket(ticket);
-        return ticket;
     }
 
     @Override
@@ -101,9 +98,9 @@ public class BookingFacadeImpl implements BookingFacade {
     }
 
     @Override
-    public Page<Ticket> getBookedTickets(User user, int page, int pageNum) {
+    public Page<TicketBooked> getBookedTickets(User user, int page, int pageNum) {
         Pageable pageable = PageRequest.of(page, pageNum);
-        Page<Ticket> tickets = ticketService.searchTickets(user.getId(), pageable);
+        Page<TicketBooked> tickets = ticketService.searchTickets(user.getId(), pageable);
         return tickets;
 
     }
@@ -120,18 +117,21 @@ public class BookingFacadeImpl implements BookingFacade {
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
         TransactionStatus status = transactionManager.getTransaction(def);
-
+        log.debug("preload ticket");
         try {
             List<TicketDto> ticketList = ticketsDto.getTickets();
             for (TicketDto ticketDto : ticketList) {
-                Ticket ticket = new Ticket();
-                ticket.setUserId(ticketDto.getUserId());
-                ticket.setEventId(ticketDto.getEventId());
-                ticket.setPlace(ticketDto.getPlace());
-                ticket.setCategory(TicketCategory.valueOf(ticketDto.getCategory()));
+                User user = userService.getUserById(ticketDto.getUserId());
 
-                ticketService.bookTicket(ticket);  // Saving each ticket to the repository
+                Ticket ticket = getOrCreateTicket(ticketDto.getEventId(), ticketDto.getPlace(), ticketDto.getCategory());
+
+                TicketBooked ticketBooked = new TicketBooked();
+                ticketBooked.setUser(user);
+                ticketBooked.setTicket(ticket);
+
+                ticketService.bookTicket(ticket.getId(), user.getId());  // Saving each ticket to the repository
             }
+
             transactionManager.commit(status);  // Commit the transaction if everything goes well
         } catch (Exception e) {
             transactionManager.rollback(status);  // Rollback if something goes wrong
@@ -139,5 +139,40 @@ public class BookingFacadeImpl implements BookingFacade {
         } finally {
             inputStream.close();
         }
+    }
+
+    private Ticket getOrCreateTicket(long eventId, int place, String ticketCategory) {
+        Ticket ticket = ticketService.getTicket(eventId, place, ticketCategory)
+                .orElseGet(() -> {
+                    Ticket ticketToCreate = new Ticket();
+                    Event eventById = eventService.getEventById(eventId);
+                    ticketToCreate.setEvent(eventById);
+                    ticketToCreate.setPlace(place);
+                    ticketToCreate.setCategory(TicketCategory.valueOf(ticketCategory));
+                    ticketToCreate.setPrice(100l);
+                    return ticketService.createTicket(ticketToCreate);
+                });
+
+        return ticket;
+    }
+
+    @Override
+    public Ticket createTicket(Long eventId, int place, long price, String category) {
+        TicketCategory ticketCategory = TicketCategory.valueOf(category);
+
+        Event eventById = eventService.getEventById(eventId);
+
+        Ticket ticket = new Ticket();
+        ticket.setEvent(eventById);
+        ticket.setPlace(place);
+        ticket.setCategory(ticketCategory);
+        ticket.setPrice(price);
+
+        return ticketService.createTicket(ticket);
+    }
+
+    @Override
+    public TicketBooked bookTicket(Long ticketId, Long userId) {
+        return ticketService.bookTicket(ticketId, userId);
     }
 }
