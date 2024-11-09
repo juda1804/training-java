@@ -1,5 +1,6 @@
 package app;
 
+import app.domain.User;
 import app.facade.BookingFacade;
 import java.time.LocalDateTime;
 import org.springframework.boot.CommandLineRunner;
@@ -25,7 +26,8 @@ public class StartupRunner implements CommandLineRunner {
         }
 
         for (int i = 0; i < 50; i++) {
-            bookingFacade.createUser(faker.name().name(), faker.name().username() + "@test.com");
+            User user = bookingFacade.createUser(faker.name().name(), faker.name().username() + "@test.com");
+            bookingFacade.addBalance(user.getId(), faker.number().numberBetween(10000, 90000));
         }
 
         bookingFacade.preloadTickets("src/main/resources/tickets.xml");

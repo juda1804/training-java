@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import app.domain.Event;
 import app.domain.Ticket;
+import app.domain.TicketBooked;
 import app.domain.TicketCategory;
 import app.domain.User;
 import app.service.EventService;
@@ -42,7 +43,11 @@ class BookingFacadeImplTest {
         String name = "John";
         String email = "john@example.com";
 
-        User user = new User(id, name, email);
+        User user = new User();
+        user.setId(id);
+        user.setName("John");
+        user.setEmail(email);
+
         when(userService.createUser(any(User.class))).thenReturn(user);
 
         User createdUser = bookingFacade.createUser(name, email);
@@ -79,19 +84,31 @@ class BookingFacadeImplTest {
         Long eventId = 2L;
         Long userId = 3L;
         Integer place = 10;
+        Long price = 10000l;
         String category = "VIP";
 
-        doNothing().when(ticketService).bookTicket(any(Ticket.class));
 
-        Ticket bookedTicket = bookingFacade.bookTicket(eventId, userId, place, category);
+        Event event = new Event(eventId, "", LocalDateTime.now());
+        User user = new User();
+        user.setId(userId);
+        user.setName("John");
+        user.setEmail("john@example.com");
+
+
+        TicketBooked ticketBooked = new TicketBooked();
+        ticketBooked.setId(ticketId);
+        ticketBooked.setUser(user);
+        ticketBooked.setTicket(new Ticket(ticketId, event, place, price, TicketCategory.valueOf(category)));
+
+        when(ticketService.bookTicket(anyLong(), anyLong())).thenReturn(ticketBooked);
+
+        TicketBooked bookedTicket = bookingFacade.bookTicket(eventId, userId);
 
         assertNotNull(bookedTicket);
         assertEquals(ticketId, bookedTicket.getId());
-        assertEquals(eventId, bookedTicket.getEventId());
-        assertEquals(userId, bookedTicket.getUserId());
-        assertEquals(place, bookedTicket.getPlace());
-        assertEquals(TicketCategory.VIP, bookedTicket.getCategory());
+        assertEquals(place, bookedTicket.getTicket().getPlace());
+        assertEquals(category, bookedTicket.getTicket().getCategory().name());
 
-        verify(ticketService, times(1)).bookTicket(any(Ticket.class));
+        verify(ticketService, times(1)).bookTicket(anyLong(), anyLong());
     }
 }

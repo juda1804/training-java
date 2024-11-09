@@ -3,6 +3,7 @@ package app.controller;
 import app.dao.TicketRepository;
 import app.domain.Event;
 import app.domain.Ticket;
+import app.domain.TicketBooked;
 import app.domain.TicketCategory;
 import app.domain.User;
 import app.facade.BookingFacade;
@@ -31,7 +32,7 @@ public class TicketController {
                                     @RequestParam() Long userId) {
         User userById = bookingFacade.getUserById(userId).get();
 
-        Page<Ticket> page = bookingFacade.getBookedTickets(userById,pageNum, pageSize);
+        Page<TicketBooked> page = bookingFacade.getBookedTickets(userById,pageNum, pageSize);
 
         // Add tickets and pagination metadata to the model
         ModelAndView mav = new ModelAndView("ticketList");  // "ticketList" is the Thymeleaf template
