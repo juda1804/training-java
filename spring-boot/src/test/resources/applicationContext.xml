@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/data/jpa
+       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="h2DataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="hibernateJpaVendor"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true"/>
+        <property name="showSql" value="true"/>
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="h2DataSource"/>
+        <property name="packagesToScan" value="org.booking.model"/>
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendor"/>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <qualifier value="booking"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <jpa:repositories base-package="org.booking.data.repository"/>
+
+    <bean id="dbInit" class="org.booking.config.DbInitialization"/>
+
+    <bean id="eventService" class="org.booking.service.EventService"/>
+    <bean id="ticketService" class="org.booking.service.TicketService"/>
+    <bean id="userService" class="org.booking.service.UserService"/>
+    <bean id="userAccountService" class="org.booking.service.UserAccountService"/>
+
+    <bean id="bookingFacade" class="org.booking.facade.BookingFacadeImpl">
+        <constructor-arg name="eventService" ref="eventService"/>
+        <constructor-arg name="ticketService" ref="ticketService"/>
+        <constructor-arg name="userService" ref="userService"/>
+        <constructor-arg name="userAccountService" ref="userAccountService"/>
+    </bean>
+
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <bean id="readDataService" class="org.booking.service.ReadDataService">
+        <property name="unmarshaller" ref="xstreamMarshaller"/>
+    </bean>
+
+    <bean id="typePermission" class="com.thoughtworks.xstream.security.WildcardTypePermission">
+        <constructor-arg value="org.booking.model.*"/>
+    </bean>
+
+    <bean id="xstreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+        <property name="typePermissions" ref="typePermission"/>
+        <property name="aliases">
+            <props>
+                <prop key="users">org.booking.model.Users</prop>
+                <prop key="user">org.booking.model.User</prop>
+                <prop key="events">org.booking.model.Events</prop>
+                <prop key="event">org.booking.model.Event</prop>
+                <prop key="tickets">org.booking.model.Tickets</prop>
+                <prop key="ticket">org.booking.model.Ticket</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>org.booking.model.Users</value>
+                <value>org.booking.model.User</value>
+                <value>org.booking.model.Events</value>
+                <value>org.booking.model.Event</value>
+                <value>org.booking.model.Tickets</value>
+                <value>org.booking.model.Ticket</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="brokerService" class="org.apache.activemq.broker.BrokerService">
+        <property name="useJmx" value="false" />
+        <property name="persistent" value="false" />
+        <property name="brokerName" value="embeddedBroker" />
+        <property name="transportConnectorURIs">
+            <list>
+                <value>vm://localhost</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false" />
+    </bean>
+
+    <bean id="ticketMessageConverter" class="org.booking.converter.TicketMessageConverter"/>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="messageConverter" ref="ticketMessageConverter"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
+    <bean id="authRestController" class="org.booking.restcontroller.auth.AuthRestController">
+        <constructor-arg name="restTemplate" ref="restTemplate"/>
+    </bean>
+
+</beans>

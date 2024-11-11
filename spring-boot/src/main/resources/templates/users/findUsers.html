@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Booking service</title>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link th:href="@{/css/booking.css}" rel="stylesheet" />
+    <script  src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <div>
+        <div class="navbar" style="width: 601px;">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li style="width: 100px;"><a th:href="@{/users/find}"><i class="icon-user"></i>Users</a></li>
+                    <li style="width: 100px;"><a th:href="@{/}"><i class="icon-eye-open"></i>Events</a></li>
+                    <li style="width: 100px;"><a th:href="@{/}"><i class="icon-film"></i>Tickets</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h2>Find Users</h2>
+
+    <form th:object="${user}" th:action="@{/users}" method="get" class="form-horizontal"
+          id="search-user-form">
+        <fieldset>
+            <div class="control-group" id="name">
+                <label class="control-label">Name </label>
+                <input type="text" th:field="*{name}" size="30" maxlength="80"/>
+                <span class="help-inline" th:errors="*{name}">[Errors]</span>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Find User</button>
+            </div>
+        </fieldset>
+    </form>
+
+    <br/>
+    <a th:href="@{'/users/new'}" href="createOrUpdateUserForm.html">Add User</a>
+
+</div>
+</body>
+
+</html>
