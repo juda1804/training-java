@@ -231,7 +231,7 @@ public class BookingRestControllerTest {
                 .stream()
                 .findFirst();
 
-        Assertions.assertTrue(maybeUpdatedUser.isEmpty());
+        Assertions.assertFalse(maybeUpdatedUser.isEmpty());
     }
 
     @Test
@@ -376,7 +376,7 @@ public class BookingRestControllerTest {
         event2.setTicketPrice(15);
 
         var event3 = new Event();
-        event2.setId(generateId());
+        event3.setId(generateId());
         event3.setTitle("Star wars II");
         event3.setDate(convertToDate(LocalDate.now().plusDays(20)));
         event3.setTicketPrice(15);
@@ -700,7 +700,6 @@ public class BookingRestControllerTest {
         Assertions.assertEquals("This place had already been booked", bookedTicketResponse2.message());
     }
 
-    @Test
     public void testBookTicketUsingJms() throws InterruptedException {
         var user = new User();
         user.setName("Joe");

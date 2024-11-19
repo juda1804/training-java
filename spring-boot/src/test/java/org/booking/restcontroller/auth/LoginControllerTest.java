@@ -27,10 +27,9 @@ public class LoginControllerTest {
     @Test
     public void testLoginRedirection() throws Exception {
         var expectedUrl = "https://github.com/login/oauth/authorize?" +
-                "client_id=Ov23li0HWe5hMnIav8I9&" +
+                "client_id=Ov23liOXZDvgmweaglRH&" +
                 "redirect_uri=http://localhost:8080/auth/callback&" +
                 "scope=read:user,user:email";
-
         this.mockMvc.perform(get("/auth/login"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(expectedUrl));

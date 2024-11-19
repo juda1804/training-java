@@ -1,5 +1,6 @@
 package org.booking.jms;
 
+import org.booking.TestWebApplication;
 import org.booking.facade.BookingFacade;
 import org.booking.model.Ticket;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.booking.util.IdentifierGenerator.generateId;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class BookingReceiverMocksUnitTest {
     @Mock
     private BookingFacade bookingFacade;

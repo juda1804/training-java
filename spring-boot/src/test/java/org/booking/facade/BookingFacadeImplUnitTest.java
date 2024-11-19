@@ -1,5 +1,6 @@
 package org.booking.facade;
 
+import org.booking.TestWebApplication;
 import org.booking.model.Event;
 import org.booking.model.Ticket;
 import org.booking.model.User;
@@ -28,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class BookingFacadeImplUnitTest {
     @Mock
     private EventService eventService;

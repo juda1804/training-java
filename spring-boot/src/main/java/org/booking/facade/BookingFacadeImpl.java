@@ -6,12 +6,15 @@ import org.booking.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 import static org.booking.util.IdentifierGenerator.generateId;
 
+@Component
 public class BookingFacadeImpl implements BookingFacade {
     private final Logger LOGGER = LoggerFactory.getLogger(BookingFacadeImpl.class);
 
@@ -107,7 +110,7 @@ public class BookingFacadeImpl implements BookingFacade {
         return userService.delete(userId);
     }
 
-    @Transactional(transactionManager = "booking")
+    @Transactional()
     @Override
     public Ticket bookTicket(long userId, long eventId, int place, Ticket.Category category) {
         return buyTicket(userId, eventId, place, category)
@@ -151,7 +154,7 @@ public class BookingFacadeImpl implements BookingFacade {
         return ticketService.cancel(ticketId);
     }
 
-    @Transactional("booking")
+    @Transactional()
     @Override
     public UserAccount createUserAccount(UserAccount userAccount) {
         if (userService.existsUser(userAccount.getUserId())) {
@@ -171,7 +174,7 @@ public class BookingFacadeImpl implements BookingFacade {
         return userAccountService.delete(accountId);
     }
 
-    @Transactional("booking")
+    @Transactional()
     @Override
     public void preloadTickets() {
         readDataService

@@ -67,38 +67,6 @@
     <context:annotation-config/>
     <context:property-placeholder location="classpath:application.properties"/>
 
-    <bean id="readDataService" class="org.booking.service.ReadDataService">
-        <property name="unmarshaller" ref="xstreamMarshaller"/>
-    </bean>
-
-    <bean id="typePermission" class="com.thoughtworks.xstream.security.WildcardTypePermission">
-        <constructor-arg value="org.booking.model.*"/>
-    </bean>
-
-    <bean id="xstreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
-        <property name="typePermissions" ref="typePermission"/>
-        <property name="aliases">
-            <props>
-                <prop key="users">org.booking.model.Users</prop>
-                <prop key="user">org.booking.model.User</prop>
-                <prop key="events">org.booking.model.Events</prop>
-                <prop key="event">org.booking.model.Event</prop>
-                <prop key="tickets">org.booking.model.Tickets</prop>
-                <prop key="ticket">org.booking.model.Ticket</prop>
-            </props>
-        </property>
-        <property name="annotatedClasses">
-            <list>
-                <value>org.booking.model.Users</value>
-                <value>org.booking.model.User</value>
-                <value>org.booking.model.Events</value>
-                <value>org.booking.model.Event</value>
-                <value>org.booking.model.Tickets</value>
-                <value>org.booking.model.Ticket</value>
-            </list>
-        </property>
-    </bean>
-
     <bean id="brokerService" class="org.apache.activemq.broker.BrokerService">
         <property name="useJmx" value="false" />
         <property name="persistent" value="false" />
@@ -112,13 +80,6 @@
 
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false" />
-    </bean>
-
-    <bean id="ticketMessageConverter" class="org.booking.converter.TicketMessageConverter"/>
-
-    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory"/>
-        <property name="messageConverter" ref="ticketMessageConverter"/>
     </bean>
 
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>

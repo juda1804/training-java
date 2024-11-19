@@ -1,5 +1,6 @@
 package org.booking.config;
 
+import org.booking.TestWebApplication;
 import org.booking.data.repository.EventRepository;
 import org.booking.data.repository.TicketRepository;
 import org.booking.data.repository.UserRepository;
@@ -12,8 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = TestWebApplication.class)
 public class DbInitializationTest {
 
     @Autowired

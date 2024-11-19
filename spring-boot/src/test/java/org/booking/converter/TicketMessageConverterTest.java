@@ -3,6 +3,7 @@ package org.booking.converter;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
+import org.booking.TestWebApplication;
 import org.booking.model.Ticket;
 import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class TicketMessageConverterTest {
 
     @Mock

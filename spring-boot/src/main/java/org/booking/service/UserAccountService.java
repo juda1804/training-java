@@ -45,7 +45,7 @@ public class UserAccountService {
      * @param amount amount to refill.
      * @return Flag that shows whether user account has been updated with the new amount.
      */
-    @Transactional("booking")
+    @Transactional()
     public boolean refillUserAccount(long id, double amount) {
         LOGGER.info("Refilling account with id: {}", id);
         return userAccountRepository.findById(id).map(account -> {

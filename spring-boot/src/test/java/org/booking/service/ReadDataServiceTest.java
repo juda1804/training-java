@@ -1,5 +1,6 @@
 package org.booking.service;
 
+import org.booking.TestWebApplication;
 import org.booking.model.Events;
 import org.booking.model.User;
 import org.booking.model.Users;
@@ -14,8 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class ReadDataServiceTest {
 
     @Autowired

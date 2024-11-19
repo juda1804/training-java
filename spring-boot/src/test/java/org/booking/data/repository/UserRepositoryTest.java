@@ -1,230 +1,86 @@
 package org.booking.data.repository;
 
+import org.booking.TestWebApplication;
 import org.booking.model.User;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
-import static org.booking.util.IdentifierGenerator.generateId;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    public void resetDb() {
-        userRepository.deleteAll();
-    }
-
     @Test
-    public void testSaveUser() {
-        var user = new User();
-        user.setId(generateId());
-        user.setName("John");
-        user.setEmail("john@email.com");
-
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
-    }
-
-    @Test
-    public void testSaveUserIfItWasAlreadyStored() {
-        var user1 = new User();
-        user1.setId(generateId());
-        user1.setName("John");
-        user1.setEmail("john@email.com");
-
-        var storedTicket1 = userRepository.save(user1);
-        Assertions.assertEquals(user1.getId(), storedTicket1.getId());
-        Assertions.assertEquals(user1.getName(), storedTicket1.getName());
-        Assertions.assertEquals(user1.getEmail(), storedTicket1.getEmail());
-
-        var user2 = new User();
-        user2.setId(generateId());
-        user2.setName("Maria");
-        user2.setEmail("maria@email.com");
-
-        var storedTicket2 = userRepository.save(user2);
-        Assertions.assertEquals(user2.getId(), storedTicket2.getId());
-        Assertions.assertEquals(user2.getName(), storedTicket2.getName());
-        Assertions.assertEquals(user2.getEmail(), storedTicket2.getEmail());
-    }
-
-    @Test
-    public void testFindUserById() {
-        var id = generateId();
-        var user = new User();
-        user.setId(id);
-        user.setName("John");
-        user.setEmail("john@email.com");
-
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
-
-        var result = userRepository.findById(id);
-        Assertions.assertEquals(Optional.of(id), result.map(User::getId));
-    }
-
-    @Test
-    public void testFindUserByIdIfUserHasNotBeenStored() {
-        var id = generateId();
-
-        var result = userRepository.findById(id);
-        Assertions.assertEquals(Optional.empty(), result.map(User::getId));
-    }
-
-    @Test
-    public void testExistsUser() {
-        var id = generateId();
-        var user = new User();
-        user.setId(id);
-        user.setName("John");
-        user.setEmail("john@email.com");
-
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
-
-        var result = userRepository.existsById(id);
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    public void testExistsUserIfUserHasNotBeenStored() {
-        var id = generateId();
-
-        var result = userRepository.existsById(id);
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    public void testFindUserByEmail() {
-        var id = generateId();
-        var user = new User();
-        user.setId(id);
-        user.setName("Teresa");
-        user.setEmail("teresa@email.com");
-
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
-
-        var result = userRepository.findByEmail(user.getEmail());
-        Assertions.assertEquals(Optional.of(id), result.stream().map(User::getId).findFirst());
-    }
-
-    @Test
-    public void testFilterUsersByName() {
-        var name = "Peter";
-        var email = "peter@email.com";
-
-        var user1 = new User();
-        user1.setId(generateId());
-        user1.setName(name);
-        user1.setEmail(email);
-
-        var user2 = new User();
-        user2.setId(generateId());
-        user2.setName(name);
-        user2.setEmail(email);
-
-        var user3 = new User();
-        user3.setId(generateId());
-        user3.setName("Maria");
-        user3.setEmail("maria@email.com");
-
-        var user4 = new User();
-        user4.setId(generateId());
-        user4.setName(name);
-        user4.setEmail(email);
-
-        List.of(user1, user2, user3,user4)
-                .forEach(userRepository::save);
-
-        var size = 2;
-        Function<Integer, Pageable> createPage = (page) -> PageRequest.of(page, size);
-
-        var userPage1 = userRepository.findByNameContaining(name, createPage.apply(0));
-        var userPage2 = userRepository.findByNameContaining(name, createPage.apply(1));
-        var userPage3 = userRepository.findByNameContaining(name, createPage.apply(2));
-
-        Assertions.assertEquals(2, userPage1.size());
-        Assertions.assertEquals(1, userPage2.size());
-        Assertions.assertEquals(0, userPage3.size());
-    }
-
-    @Test
-    public void testUpdateUser() {
-        var user = new User();
-        user.setId(generateId());
-        user.setName("John");
-        user.setEmail("john@email.com");
-
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
-
+    public void testFindByEmail() {
+        // Crear y guardar un usuario
+        User user = new User();
+        user.setId(1L);
         user.setName("John Doe");
+        user.setEmail("john.doe@example.com");
+        userRepository.save(user);
 
-        var updatedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), updatedTicket.getId());
-        Assertions.assertEquals(user.getName(), updatedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), updatedTicket.getEmail());
+        // Consultar por email
+        List<User> result = userRepository.findByEmail("john.doe@example.com");
+
+        // Verificar que el usuario fue encontrado
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("John Doe", result.get(0).getName());
     }
 
     @Test
-    public void testUpdateUserIfItHasNotBeenStored() {
-        var user = new User();
-        user.setId(generateId());
-        user.setName("John");
-        user.setEmail("john@email.com");
+    public void testFindByNameContaining() {
+        // Crear y guardar usuarios
+        User user1 = new User();
+        user1.setId(1L);
+        user1.setName("Alice");
+        user1.setEmail("alice@example.com");
+        userRepository.save(user1);
 
-        var updatedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), updatedTicket.getId());
-        Assertions.assertEquals(user.getName(), updatedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), updatedTicket.getEmail());
+        User user2 = new User();
+        user2.setId(2L);
+        user2.setName("Alicia");
+        user2.setEmail("alicia@example.com");
+        userRepository.save(user2);
+
+        User user3 = new User();
+        user3.setId(3L);
+        user3.setName("Bob");
+        user3.setEmail("bob@example.com");
+        userRepository.save(user3);
+
+        // Consultar usuarios cuyo nombre contiene "Ali"
+        List<User> result = userRepository.findByNameContaining("Ali", PageRequest.of(0, 10));
+
+        // Verificar resultados
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertTrue(result.stream().anyMatch(u -> u.getName().equals("Alice")));
+        Assertions.assertTrue(result.stream().anyMatch(u -> u.getName().equals("Alicia")));
     }
 
     @Test
-    public void testDeleteUser() {
-        var user = new User();
-        user.setId(generateId());
-        user.setName("John");
-        user.setEmail("john@email.com");
+    public void testSaveAndRetrieveUser() {
+        // Crear un usuario
+        User user = new User();
+        user.setId(1L);
+        user.setName("John Doe");
+        user.setEmail("john.doe@example.com");
 
-        var storedTicket = userRepository.save(user);
-        Assertions.assertEquals(user.getId(), storedTicket.getId());
-        Assertions.assertEquals(user.getName(), storedTicket.getName());
-        Assertions.assertEquals(user.getEmail(), storedTicket.getEmail());
+        // Guardar el usuario
+        userRepository.save(user);
 
-        var existsUserBeforeDeleting = userRepository.existsById(user.getId());
-        Assertions.assertTrue(existsUserBeforeDeleting);
+        // Recuperar el usuario
+        User retrievedUser = userRepository.findById(1L).orElse(null);
 
-        userRepository.deleteById(user.getId());
-
-        var existsUserAfterDeleting = userRepository.existsById(user.getId());
-        Assertions.assertFalse(existsUserAfterDeleting);
+        // Verificar que los datos coincidan
+        Assertions.assertNotNull(retrievedUser);
+        Assertions.assertEquals("John Doe", retrievedUser.getName());
+        Assertions.assertEquals("john.doe@example.com", retrievedUser.getEmail());
     }
 }

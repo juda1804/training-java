@@ -25,14 +25,19 @@ import static org.booking.util.IdentifierGenerator.generateId;
 public class BookingRestController {
     private final Logger LOGGER =LoggerFactory.getLogger(BookingRestController.class);
 
-    @Autowired
-    private BookingFacade bookingFacade;
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
+    private final BookingFacade bookingFacade;
+
+
+    private final JmsTemplate jmsTemplate;
 
     @Value("${jms.message.destination}")
     private String bookingMessage;
+
+    public BookingRestController(BookingFacade bookingFacade, JmsTemplate jmsTemplate) {
+        this.bookingFacade = bookingFacade;
+        this.jmsTemplate = jmsTemplate;
+    }
 
     /**
      * Creates new user. User id is auto-generated.

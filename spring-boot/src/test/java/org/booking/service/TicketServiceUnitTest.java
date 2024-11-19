@@ -1,5 +1,6 @@
 package org.booking.service;
 
+import org.booking.TestWebApplication;
 import org.booking.data.repository.TicketRepository;
 import org.booking.model.Ticket;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +20,7 @@ import static org.booking.util.IdentifierGenerator.generateId;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class TicketServiceUnitTest {
 
     @Mock

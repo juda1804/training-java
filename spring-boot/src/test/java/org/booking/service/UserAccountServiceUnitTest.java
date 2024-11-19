@@ -1,5 +1,6 @@
 package org.booking.service;
 
+import org.booking.TestWebApplication;
 import org.booking.data.repository.UserAccountRepository;
 import org.booking.model.UserAccount;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import static org.booking.util.IdentifierGenerator.generateId;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class UserAccountServiceUnitTest {
 
     @Mock

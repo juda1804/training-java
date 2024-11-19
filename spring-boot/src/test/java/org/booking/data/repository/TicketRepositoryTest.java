@@ -1,5 +1,6 @@
 package org.booking.data.repository;
 
+import org.booking.TestWebApplication;
 import org.booking.model.Ticket;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,7 @@ import java.util.function.Function;
 import static org.booking.util.IdentifierGenerator.generateId;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class TicketRepositoryTest {
 
     @Autowired

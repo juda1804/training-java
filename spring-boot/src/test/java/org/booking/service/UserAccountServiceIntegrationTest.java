@@ -1,5 +1,6 @@
 package org.booking.service;
 
+import org.booking.TestWebApplication;
 import org.booking.data.repository.UserAccountRepository;
 import org.booking.model.UserAccount;
 import org.junit.Before;
@@ -16,8 +17,7 @@ import java.util.List;
 import static org.booking.util.IdentifierGenerator.generateId;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class UserAccountServiceIntegrationTest {
     @Autowired
     private UserAccountRepository userAccountDao;

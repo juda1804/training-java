@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
-@ImportResource("classpath:applicationContext.xml")
 public class Main implements CommandLineRunner {
     private final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 

@@ -4,9 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.io.Serializable;
 
 @Entity(name = "tickets")
-public class Ticket {
+public class Ticket implements Serializable {
     public enum Category {STANDARD, PREMIUM, BAR}
 
     @Id

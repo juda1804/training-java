@@ -1,5 +1,6 @@
 package org.booking.data.repository;
 
+import org.booking.TestWebApplication;
 import org.booking.model.UserAccount;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -16,8 +17,7 @@ import java.util.Optional;
 import static org.booking.util.IdentifierGenerator.generateId;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class UserAccountRepositoryTest {
 
     @Autowired

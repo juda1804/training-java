@@ -1,5 +1,6 @@
 package org.booking.facade;
 
+import org.booking.TestWebApplication;
 import org.booking.data.repository.EventRepository;
 import org.booking.data.repository.TicketRepository;
 import org.booking.data.repository.UserAccountRepository;
@@ -35,8 +36,7 @@ import static org.booking.CommonUtilTest.convertToDate;
 import static org.booking.util.IdentifierGenerator.generateId;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/applicationContext.xml"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = TestWebApplication.class)
 public class BookingFacadeImplIntegrationTest {
 
     @Autowired
@@ -71,7 +71,7 @@ public class BookingFacadeImplIntegrationTest {
     }
 
     @Test
-    @Transactional("booking")
+    @Transactional()
     public void givenTransactional_whenCheckingForActiveTransaction_thenReceiveTrue() {
         Assertions.assertTrue(TransactionSynchronizationManager.isActualTransactionActive());
     }

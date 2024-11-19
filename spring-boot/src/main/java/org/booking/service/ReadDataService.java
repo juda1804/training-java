@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.stereotype.Service;
-
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +15,9 @@ import java.util.function.Function;
 public class ReadDataService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReadDataService.class);
 
-    private XStreamMarshaller xstreamMarshaller;
+    private final XStreamMarshaller xstreamMarshaller;
 
-    public void setUnmarshaller(XStreamMarshaller xstreamMarshaller) {
+    public ReadDataService(XStreamMarshaller xstreamMarshaller) {
         this.xstreamMarshaller = xstreamMarshaller;
     }
 
