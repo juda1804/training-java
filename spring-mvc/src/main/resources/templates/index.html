@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot Thymeleaf Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        h2 {
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            background-color: #f4f4f4;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tab:hover {
+            background-color: #e4e4e4;
+        }
+
+        .tab.active {
+            background-color: #fff;
+            border-bottom: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        input[type="email"],
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+        }
+
+        .see-tickets-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .see-tickets-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Spring Boot MVC with Thymeleaf</h1>
+
+    <!-- Tabs for Users, Events, and Tickets -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('user-tab')">Users</div>
+        <div class="tab" onclick="showTab('event-tab')">Events</div>
+        <div class="tab" onclick="showTab('ticket-tab')">Tickets</div>
+        <div class="tab" onclick="loadViewTickets('view-tickets-tab')">View Tickets</div>
+    </div>
+
+    <!-- User Tab -->
+    <div id="user-tab" class="tab-content active">
+        <h2>Create User</h2>
+        <form th:action="@{/users/}" method="post">
+            <!-- Removed ID field, since it's auto-generated -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <button type="submit">Create User</button>
+        </form>
+
+        <hr>
+
+        <h2>Get User by ID</h2>
+        <form id="getUserForm" method="get" onsubmit="submitGetUserForm(event)">
+            <label for="userId">Enter User ID:</label>
+            <input type="number" id="user-userId" name="userId" required>
+
+            <button type="submit">Get User</button>
+        </form>
+
+        <h2>All Users</h2>
+        <div id="users-list">
+            <!-- User list will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <!-- Event Tab -->
+    <div id="event-tab" class="tab-content">
+        <h2>Create Event</h2>
+        <form th:action="@{/events/create}" method="post">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="dateTime">Date & Time:</label>
+            <input type="datetime-local" id="dateTime" name="dateTime" required>
+
+            <button type="submit">Create Event</button>
+        </form>
+
+        <hr>
+
+        <h2>Get Event by ID</h2>
+        <form th:action="@{/events/{id}(id=${eventId})}" th:object="${event}" method="get">
+            <label for="eventId">Enter Event ID:</label>
+            <input type="number" id="eventId" name="eventId" required>
+
+            <button type="submit">Get Event</button>
+        </form>
+    </div>
+
+    <!-- Ticket Tab -->
+    <div id="ticket-tab" class="tab-content">
+        <h2>Create Ticket</h2>
+        <form th:action="@{/ticketsDto/create}" method="post">
+            <label for="userId">User ID:</label>
+            <input type="number" id="userId" name="userId" required>
+
+            <label for="eventId">Event ID:</label>
+            <input type="number" id="eventId" name="eventId" required>
+
+            <label for="place">Place:</label>
+            <input type="number" id="place" name="place" required>
+
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required>
+
+            <button type="submit">Create Ticket</button>
+        </form>
+
+        <hr>
+
+        <h2>Get Ticket by ID</h2>
+        <form th:action="@{/ticketsDto/get/{id}(id=${ticketId})}" th:object="${ticket}" method="get">
+            <label for="ticketId">Enter Ticket ID:</label>
+            <input type="number" id="ticketId" name="ticketId" required>
+
+            <button type="submit">Get Ticket</button>
+        </form>
+    </div>
+    <div id="view-tickets-tab" class="tab-content">
+        <h2>View Tickets</h2>
+        <div id="tickets-content">
+            <!-- Ticket list will be loaded here dynamically -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript to show/hide tab contents
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function loadViewTickets(tabId) {
+        showTab(tabId);
+        fetch('/tickets/all')  // Replace with the actual route where you are serving ticket content
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('tickets-content').innerHTML = html;
+            })
+            .catch(error => console.error('Error loading ticketsDto:', error));
+    }
+
+
+    function submitGetUserForm(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+        const userId = document.getElementById('user-userId').value;
+        if (userId) {
+            // Redirect to the constructed URL
+            window.location.href = `/users/${userId}`;
+        }
+    }
+
+    function loadUsers() {
+        fetch('/users/all') 
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('users-list').innerHTML = html;
+            })
+            .catch(error => console.error('Error loading users:', error));
+    }
+
+    loadUsers();
+</script>
+
+</body>
+</html>
